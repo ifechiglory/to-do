@@ -67,7 +67,7 @@ src/
 
 ## ✨ Demo
 
-[App Screenshot](todo.png)
+![App Screenshot](assets/todo.png)
 
 ------------------------------------------------------------------------
 
