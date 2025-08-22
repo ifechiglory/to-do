@@ -6,6 +6,7 @@ import {
   clearTodos,
 } from "../features/todos/todosSlice";
 import { useState } from "react";
+import { IoClose } from 'react-icons/io5'
 
 export default function TodoList() {
   const todos = useSelector((state) => state.todos);
@@ -42,45 +43,54 @@ export default function TodoList() {
         </button>
       </section>
       <ul className="space-y-2">
-        {filteredTodos.length > 0 ? (
+        {todos.length === 0 ? (
+          // Entire todo list is empty
+          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
+            <p className="text-sm">
+              You currently have nothing on your todo list.
+            </p>
+            <p className="text-xs mt-1">
+              Add a todo item to your list to get started ✅
+            </p>
+          </li>
+        ) : filteredTodos.length === 0 && filter === "Completed" ? (
+          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
+            <p className="text-sm">You have not completed any todo item yet.</p>
+          </li>
+        ) : (
           filteredTodos.map((todo) => (
             <li
-              className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded shadow-sm"
               key={todo.id}
+              className={`flex justify-between items-center bg-gray-50 px-3 py-2 rounded shadow-sm cursor-pointer transition-all duration-300 ${
+                todo.completed ? "opacity-60" : "opacity-100"
+              }`}
             >
               <span
-                onClick={() => dispatch(toggleTodo(todo.id))}
-                className={`cursor-pointer ${
+                className={`flex-grow transition-opacity duration-300 ${
                   todo.completed ? "line-through text-gray-500" : ""
                 }`}
               >
                 {todo.text}
               </span>
-              <button
-                className="text-red-500 hover:text-red-700"
-                onClick={() => dispatch(deleteTodo(todo.id))}
-              >
-                x
-              </button>
+
+              <section className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => dispatch(toggleTodo(todo.id))}
+                  title="Mark as completed"
+                  className="w-5 h-5 rounded border-gray-300 accent-green-500 focus:ring-green-400 cursor-pointer"
+                />
+                <button
+                  onClick={() => dispatch(deleteTodo(todo.id))}
+                  title="Delete todo"
+                  className="text-red-500 hover:text-red-700 hover:cursor-pointer text-lg"
+                >
+                  <IoClose />
+                </button>
+              </section>
             </li>
           ))
-        ) : (
-          <li className="bg-gray-50 text-center text-gray-400 italic px-4 py-6 rounded-lg shadow-md">
-            {filter === "Completed" && todos.length > 0 ? (
-              <p className="text-sm">
-                You have not completed any todo item yet.
-              </p>
-            ) : (
-              <>
-                <p className="text-sm">
-                  You currently have nothing on your todo list.
-                </p>
-                <p className="text-xs mt-1">
-                  Add a todo item to your list to get started ✅
-                </p>
-              </>
-            )}
-          </li>
         )}
       </ul>
 
