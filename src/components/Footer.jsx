@@ -4,10 +4,10 @@ export default function Footer() {
       <p>
         Looking for the original version?{" "}
         <a
-          href="https://github.com/ifechiglory/Todo-list"
+          href="https://ifechiglory.github.io/Todo-list/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-indigo-700 hover:underline"
+          className="text-gray-800 hover:underline"
         >
           View Todo App v1
         </a>
