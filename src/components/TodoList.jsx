@@ -6,19 +6,29 @@ import {
   clearTodos,
 } from "../features/todos/todosSlice";
 import { useState } from "react";
-import { IoClose } from 'react-icons/io5'
+import { IoClose } from "react-icons/io5";
 
 export default function TodoList() {
   const todos = useSelector((state) => state.todos);
   const dispatch = useDispatch();
   const [text, setText] = useState("");
   const [filter, setFilter] = useState("All");
+  const [newlyAddedId, setNewlyAddedId] = useState(null);
 
   const filteredTodos = todos.filter((todo) => {
     if (filter === "Active") return !todo.completed;
     if (filter === "Completed") return todo.completed;
     return true;
   });
+
+  const handleAddTodo = () => {
+    if (text.trim()) {
+      const action = dispatch(addTodo(text));
+      setNewlyAddedId(action.payload.id);
+      setText("");
+      setTimeout(() => setNewlyAddedId(null), 1000);
+    }
+  };
 
   return (
     <section className="max-w-md mx-auto bg-white shadow-md rounded-xl p-6">
@@ -28,24 +38,19 @@ export default function TodoList() {
           className="flex-grow border border-gray-200 rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAddTodo()}
           placeholder="Add a todo item"
         />
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600"
-          onClick={() => {
-            if (text.trim()) {
-              dispatch(addTodo(text));
-              setText("");
-            }
-          }}
+          onClick={handleAddTodo}
         >
           Add
         </button>
       </section>
       <ul className="space-y-2">
         {todos.length === 0 ? (
-          // Entire todo list is empty
-          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
+          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-inner">
             <p className="text-sm">
               You currently have nothing on your todo list.
             </p>
@@ -54,11 +59,11 @@ export default function TodoList() {
             </p>
           </li>
         ) : filteredTodos.length === 0 && filter === "Completed" ? (
-          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
+          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-inner">
             <p className="text-sm">You have not completed any todo item yet.</p>
           </li>
         ) : filteredTodos.length === 0 && filter === "Active" ? (
-          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
+          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-inner">
             <p className="text-sm">🎉 You've completed all your todos!</p>
           </li>
         ) : (
@@ -67,6 +72,8 @@ export default function TodoList() {
               key={todo.id}
               className={`flex justify-between items-center bg-gray-50 px-3 py-2 rounded shadow-sm cursor-pointer transition-all duration-300 ${
                 todo.completed ? "opacity-60" : "opacity-100"
+              } ${
+                newlyAddedId === todo.id ? "bg-green-100 animate-pulse" : ""
               }`}
             >
               <span
@@ -76,8 +83,7 @@ export default function TodoList() {
               >
                 {todo.text}
               </span>
-
-              <section className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={todo.completed}
@@ -92,12 +98,11 @@ export default function TodoList() {
                 >
                   <IoClose />
                 </button>
-              </section>
+              </div>
             </li>
           ))
         )}
       </ul>
-
       {todos.length > 0 && (
         <section className="border-t mt-4 rounded-b-lg bg-gray-50 px-6 py-3 flex flex-col shadow-md justify-center items-center mb-4">
           <section className="flex gap-2">
