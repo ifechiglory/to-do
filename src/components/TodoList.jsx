@@ -57,6 +57,10 @@ export default function TodoList() {
           <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
             <p className="text-sm">You have not completed any todo item yet.</p>
           </li>
+        ) : filteredTodos.length === 0 && filter === "Active" ? (
+          <li className="bg-gray-100 text-center text-gray-500 italic px-4 py-6 rounded-lg shadow-md">
+            <p className="text-sm">🎉 You've completed all your todos!</p>
+          </li>
         ) : (
           filteredTodos.map((todo) => (
             <li
